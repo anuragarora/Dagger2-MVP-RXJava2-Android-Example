@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Flickr Recents</string>
+
+    <!-- API -->
+    <string name="base_url">https://api.flickr.com</string>
+    <string name="api_key">7b85e389607020e3b5a12c5a40e260db</string>
+    <string name="api_response_format">json</string>
+    <string name="api_no_json_callback">true</string>
+    <string name="api_image_url">https://farm%s.staticflickr.com/%s/%s_%s_b.jpg</string>
+
+    <string name="view_photo_list_footer_copy">Load More</string>
+    <string name="activity_network_unavailable_copy">Network connection unavailable</string>
+
+</resources>
