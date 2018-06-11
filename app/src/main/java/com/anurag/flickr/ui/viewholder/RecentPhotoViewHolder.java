@@ -1,6 +1,5 @@
 package com.anurag.flickr.ui.viewholder;
 
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,8 +8,6 @@ import android.widget.TextView;
 import com.anurag.flickr.R;
 import com.anurag.flickr.image.ImageLoader;
 import com.anurag.flickr.model.Photo;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

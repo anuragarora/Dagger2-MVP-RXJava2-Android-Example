@@ -43,7 +43,7 @@ public class GetPhotoNetworkLoader implements GetPhotoLoader, Callback<ServerGet
 
     @Override
     public void getRecentPhotos(int page) {
-        if (page == 0) {
+        /*if (page == 0) {
             GetRecentPhotosResponse lastResponse = new Gson().fromJson(mRecentPhotosRepository
                     .getRecentPhotosLastResponse(), GetRecentPhotosResponse.class);
             if (lastResponse != null) {
@@ -53,7 +53,7 @@ public class GetPhotoNetworkLoader implements GetPhotoLoader, Callback<ServerGet
             mNetworkManager.getRecentPhotos(1, this);
         } else {
             mNetworkManager.getRecentPhotos(page, this);
-        }
+        }*/
     }
 
     @Override

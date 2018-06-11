@@ -8,6 +8,7 @@ import com.anurag.flickr.model.server.ServerGetRecentPhotosSuccessResponse;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.reactivex.Single;
 import okhttp3.OkHttpClient;
 import retrofit2.Callback;
 import retrofit2.Converter;
@@ -53,12 +54,11 @@ public class RetrofitNetworkManager implements NetworkManager {
     }
 
     @Override
-    public void getRecentPhotos(int page, Callback<ServerGetRecentPhotosSuccessResponse> callback) {
-        getAdapter()
+    public Single<ServerGetRecentPhotosSuccessResponse> getRecentPhotos(int page) {
+        return getAdapter()
                 .addConverterFactory(mGsonConverter)
                 .build()
                 .create(FlickrApi.class)
-                .getRecentPhotos(GET_RECENT_PHOTOS_QUERY_METHOD, String.valueOf(page))
-                .enqueue(callback);
+                .getRecentPhotos(GET_RECENT_PHOTOS_QUERY_METHOD, String.valueOf(page));
     }
 }
