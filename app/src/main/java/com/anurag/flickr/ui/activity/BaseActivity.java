@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.anurag.flickr.Application;
 import com.anurag.flickr.event.global.NetworkStatusChangedEvent;
-import com.anurag.flickr.module.FlickrComponent;
 
 import javax.inject.Inject;
 
@@ -25,20 +24,11 @@ public class BaseActivity extends AppCompatActivity {
     private boolean mFirstConnect;
     @Inject EventBus mEventBus;
 
-    /*public BaseActivity() {
-        this(EventBusModule.eventBus());
-    }*/
-
-    /*public BaseActivity(EventBus eventBus) {
-        mEventBus = eventBus;
-    }*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Injecting
-        ((Application) getApplication()).getFlickrComponent().inject(this);
-        mEventBus.registerSticky(this);
+        Application.getApplicationComponent().inject(this);
 
         // Network connectivity listener
         mFirstDisconnect = true;
@@ -61,10 +51,8 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         try {
             unregisterReceiver(receiver);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
         }
-
-        mEventBus.unregister(this);
         super.onDestroy();
     }
 

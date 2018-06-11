@@ -31,19 +31,14 @@ import retrofit2.Response;
  */
 public class GetPhotoNetworkLoader implements GetPhotoLoader, Callback<ServerGetRecentPhotosSuccessResponse> {
     private static final String STATUS_PASS = "ok";
-    private final NetworkManager mNetworkManager;
-    private final EventBus mEventBus;
-    private final Resources mResources;
-    private final RecentPhotosRepository mRecentPhotosRepository;
 
-    public GetPhotoNetworkLoader(NetworkManager networkManager,
-                                 EventBus eventBus,
-                                 Resources resources,
-                                 RecentPhotosRepository mRecentPhotosRepository) {
-        this.mNetworkManager = networkManager;
-        this.mEventBus = eventBus;
-        this.mResources = resources;
-        this.mRecentPhotosRepository = mRecentPhotosRepository;
+    @Inject NetworkManager mNetworkManager;
+    @Inject EventBus mEventBus;
+    @Inject Resources mResources;
+    @Inject RecentPhotosRepository mRecentPhotosRepository;
+
+    @Inject
+    public GetPhotoNetworkLoader() {
     }
 
     @Override

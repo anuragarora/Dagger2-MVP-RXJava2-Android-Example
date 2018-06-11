@@ -1,9 +1,10 @@
 package com.anurag.flickr.module;
 
-import com.anurag.flickr.network.RetrofitNetworkManager;
 import com.anurag.flickr.ui.activity.BaseActivity;
 import com.anurag.flickr.ui.activity.GetRecentPhotosActivity;
 import com.anurag.flickr.ui.adapter.PhotoAdapter;
+import com.anurag.flickr.ui.fragment.PhotoListFragment;
+import com.anurag.flickr.ui.viewholder.RecentPhotoViewHolder;
 
 import javax.inject.Singleton;
 
@@ -20,5 +21,6 @@ import dagger.Component;
 public interface FlickrComponent {
     void inject(BaseActivity activity);
     void inject(GetRecentPhotosActivity activity);
-    void inject(PhotoAdapter adapter);
+    void inject(RecentPhotoViewHolder holder);
+    void inject(PhotoListFragment photoListFragment);
 }

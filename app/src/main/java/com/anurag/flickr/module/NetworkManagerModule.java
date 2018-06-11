@@ -4,10 +4,8 @@ package com.anurag.flickr.module;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.anurag.flickr.Application;
 import com.anurag.flickr.R;
 import com.anurag.flickr.network.BasicAuthorizationRequestInterceptor;
-import com.anurag.flickr.network.FlickrApi;
 import com.anurag.flickr.network.NetworkManager;
 import com.anurag.flickr.network.RetrofitNetworkManager;
 
@@ -21,7 +19,6 @@ import dagger.Provides;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Converter;
-import retrofit2.Retrofit;
 
 /**
  * Network Manager Module
@@ -51,7 +48,7 @@ public class NetworkManagerModule {
     }
 
 
-    @Provides
+    /*@Provides
     @Singleton
     NetworkManager retrofitNetworkManager(OkHttpClient okClient,
                                           Resources resources,
@@ -59,5 +56,11 @@ public class NetworkManagerModule {
                                           @Named("photos") Converter.Factory recentPhotosConverter) {
         return new RetrofitNetworkManager(okClient, resources.getString(R.string.base_url),
                 gsonConverter, recentPhotosConverter);
+    }*/
+
+    @Provides
+    @Singleton
+    NetworkManager retrofitNetworkManager(RetrofitNetworkManager retrofitNetworkManager) {
+        return retrofitNetworkManager;
     }
 }

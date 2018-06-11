@@ -1,6 +1,12 @@
 package com.anurag.flickr.network;
 
+import android.content.res.Resources;
+
+import com.anurag.flickr.R;
 import com.anurag.flickr.model.server.ServerGetRecentPhotosSuccessResponse;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Callback;
@@ -16,12 +22,12 @@ public class RetrofitNetworkManager implements NetworkManager {
 
     //@Inject Retrofit retrofit;
 
-    private final OkHttpClient mOkClient;
-    private final String mBaseUrl;
-    private final Converter.Factory mGsonConverter;
-    private final Converter.Factory mRecentPhotosConverter;
+    @Inject OkHttpClient mOkClient;
+    @Inject Resources mResources;
+    @Inject @Named("gson") Converter.Factory mGsonConverter;
+    @Inject @Named("photos") Converter.Factory mRecentPhotosConverter;
 
-    public RetrofitNetworkManager(OkHttpClient okClient,
+    /*public RetrofitNetworkManager(OkHttpClient okClient,
                                   String baseUrl,
                                   Converter.Factory gsonConverter,
                                   Converter.Factory recentPhotosConverter) {
@@ -30,7 +36,10 @@ public class RetrofitNetworkManager implements NetworkManager {
         this.mBaseUrl = baseUrl;
         this.mGsonConverter = gsonConverter;
         this.mRecentPhotosConverter = recentPhotosConverter;
-    }
+    }*/
+
+    @Inject
+    public RetrofitNetworkManager() {}
 
     /**
      * Creates a partially build retrofit object for FlickrApi service.
@@ -39,7 +48,7 @@ public class RetrofitNetworkManager implements NetworkManager {
      */
     private Retrofit.Builder getAdapter() {
         return new Retrofit.Builder()
-                .baseUrl(mBaseUrl)
+                .baseUrl(mResources.getString(R.string.base_url))
                 .client(mOkClient);
     }
 

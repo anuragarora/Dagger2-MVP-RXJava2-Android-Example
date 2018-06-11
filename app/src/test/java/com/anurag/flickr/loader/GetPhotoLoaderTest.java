@@ -15,12 +15,17 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import javax.inject.Inject;
+
+import de.greenrobot.event.EventBus;
 import retrofit2.Callback;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -45,20 +50,20 @@ public class GetPhotoLoaderTest {
     @Mock
     private RecentPhotosRepository mMockRecentPhotosRepository;
 
-    private Resources mResources;
-    private RecordingEventBus mRecordingEventBus = new RecordingEventBus();
+    @Mock EventBus mRecordingEventBus;
+
+    @InjectMocks GetPhotoNetworkLoader mGetPhotoNetworkLoader;
+
+    //RecordingEventBus mRecordingEventBus = new RecordingEventBus();
     private ClassLoader mClassLoader;
-    private GetPhotoNetworkLoader mGetPhotoNetworkLoader;
 
     @Before
     public void setUp() throws Exception {
-        mResources = RuntimeEnvironment.application.getResources();
+        //Resources mResources = RuntimeEnvironment.application.getResources();
         mClassLoader = this.getClass().getClassLoader();
 
         MockitoAnnotations.initMocks(this);
-        mGetPhotoNetworkLoader = new GetPhotoNetworkLoader(mMockNetworkManager,
-                mRecordingEventBus, mResources, mMockRecentPhotosRepository) {
-        };
+        //mGetPhotoNetworkLoader = new GetPhotoNetworkLoader();
     }
 
 
@@ -91,7 +96,7 @@ public class GetPhotoLoaderTest {
     }
 
     @Test
-    public void testPersistedResponseIsJsonStringOfTypeClientResponse() {
+    public void     testPersistedResponseIsJsonStringOfTypeClientResponse() {
         // Given mGetPhotoNetworkLoader has been injected to the desired activity/fragment &
         when(mMockRecentPhotosRepository.getRecentPhotosLastResponse())
                 .thenReturn(TestResourceReaderUtil.readFile(mClassLoader,
@@ -120,11 +125,14 @@ public class GetPhotoLoaderTest {
 
         // When
         mGetPhotoNetworkLoader.getRecentPhotos(0);
+
+        ArgumentCaptor<GetRecentPhotosSuccessResponseEvent> captor = ArgumentCaptor
+                .forClass(GetRecentPhotosSuccessResponseEvent.class);
+        verify(mRecordingEventBus, times(1)).post(captor.capture());
         //String lastSavedResponse = mMockRecentPhotosRepository.getRecentPhotosLastResponse();
 
         // Then perform assertions that correct event was fired
-        GetRecentPhotosSuccessResponseEvent event = (GetRecentPhotosSuccessResponseEvent) mRecordingEventBus
-                .getLastPostedEvent();
+        GetRecentPhotosSuccessResponseEvent event = captor.getValue();
 
         assertThat(event.isNetworkResponse(), equalTo(false));
         assertThat(event.getResponse().getPage(), equalTo(1));

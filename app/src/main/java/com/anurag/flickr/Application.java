@@ -14,12 +14,18 @@ import com.anurag.flickr.module.RepositoryModule;
  * Class extends application to do application level stuff.
  */
 public class Application extends android.app.Application {
+    /*private static Application mAppInstance;
+
+    public static Application getInstance() {
+        return mAppInstance;
+    }*/
+
     private static FlickrComponent mFlickrComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        //instance = this;
+        //mAppInstance = this;
         mFlickrComponent = DaggerFlickrComponent.builder()
                 .applicationModule(new ApplicationModule(this))
                 .converterModule(new ConverterModule())
@@ -31,7 +37,7 @@ public class Application extends android.app.Application {
                 .build();
     }
 
-    public FlickrComponent getFlickrComponent() {
+    public static FlickrComponent getApplicationComponent() {
         return mFlickrComponent;
     }
 }
