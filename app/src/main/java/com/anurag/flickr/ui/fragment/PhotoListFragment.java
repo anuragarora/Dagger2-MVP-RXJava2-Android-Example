@@ -1,5 +1,7 @@
 package com.anurag.flickr.ui.fragment;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,10 +31,12 @@ import com.anurag.flickr.model.server.ServerPhoto;
 import com.anurag.flickr.network.NetworkManager;
 import com.anurag.flickr.ui.adapter.PhotoAdapter;
 import com.anurag.flickr.util.Logger;
+import com.github.karczews.rxbroadcastreceiver.RxBroadcastReceivers;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -61,6 +65,8 @@ public class PhotoListFragment extends Fragment {
     NetworkManager mNetworkManager;
     @Inject
     RecentPhotosRepository mRecentPhotosRepository;
+    @Inject
+    ConnectivityManager mConnectivityManager;
 
     @VisibleForTesting
     Snackbar mSnackbar;
@@ -99,7 +105,7 @@ public class PhotoListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recent_photos, container, false);
 
         mUnbinder = ButterKnife.bind(this, view);
-        mEventBus.register(this);
+        //mEventBus.register(this);
 
         mLoadingIndicator.setVisibility(View.VISIBLE);
         mSnackbar = Snackbar.make(mCoordinator, R.string.activity_network_unavailable_copy,
@@ -123,7 +129,7 @@ public class PhotoListFragment extends Fragment {
         if (mCurrentPage == 0 && mRecentPhotosRepository.getRecentPhotosLastResponse() != null) {
             saveAndPostToAdapter(new Gson()
                     .fromJson(mRecentPhotosRepository
-                    .getRecentPhotosLastResponse(), GetRecentPhotosResponse.class), false);
+                            .getRecentPhotosLastResponse(), GetRecentPhotosResponse.class), false);
         } else {
             // Making get photos network call
             mDisposable.add(mNetworkManager.getRecentPhotos(mCurrentPage)
@@ -131,6 +137,19 @@ public class PhotoListFragment extends Fragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::onSuccess, this::onFailure));
         }
+
+        // Subscribe to network changes
+        mDisposable.add(RxBroadcastReceivers.fromIntentFilter(getActivity(),
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+                .subscribe(broadcast -> {
+                    if (Objects.equals(broadcast.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
+                        if (mConnectivityManager.getActiveNetworkInfo() != null &&
+                                mConnectivityManager.getActiveNetworkInfo().isConnected())
+                                mSnackbar.dismiss();
+                        else
+                            mSnackbar.show();
+                    }
+                }));
     }
 
     private void onSuccess(ServerGetRecentPhotosSuccessResponse response) {
@@ -147,35 +166,17 @@ public class PhotoListFragment extends Fragment {
         Snackbar.make(mCoordinator, throwable.getMessage(), Snackbar.LENGTH_SHORT).show();
     }
 
-
-    public void onEvent(NetworkStatusChangedEvent event) {
-        if (event.isNetworkEnabled()) {
-            if (mSnackbar.isShown())
-                mSnackbar.dismiss();
-
-            // Perform additional action when network connection is back here
-        } else {
-            mSnackbar.setAction("Dismiss", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    /* Perform any additional action ?
-                     Snack bar automatically dismisses itself onClick. */
-                }
-            }).show();
-        }
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
-        mEventBus.unregister(this);
+        //mEventBus.unregister(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mDisposable != null && !mDisposable.isDisposed())
+        if (mDisposable != null && !mDisposable.isDisposed())
             mDisposable.dispose();
     }
 

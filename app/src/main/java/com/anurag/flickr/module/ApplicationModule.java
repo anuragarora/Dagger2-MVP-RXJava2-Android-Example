@@ -3,9 +3,10 @@ package com.anurag.flickr.module;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
-import android.view.View;
 
 import javax.inject.Singleton;
 
@@ -42,5 +43,10 @@ public class ApplicationModule {
     @Provides @Singleton
     LocalBroadcastManager getBroadcastManager() {
         return LocalBroadcastManager.getInstance(applicationContext());
+    }
+
+    @Provides @Singleton
+    ConnectivityManager getNetworkActivity() {
+        return (ConnectivityManager) applicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 }
